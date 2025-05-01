@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-04-12 15:30:12 by Eclipse SUMO netedit Version 1.22.0
+-->
+
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <!-- Detectors -->
+    <inductionLoop id="detector_1_0_ENT" lane="NB0_0" pos="10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_0_EXT" lane="NB0_0" pos="-10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_1_ENT" lane="NB0_1" pos="10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_1_EXT" lane="NB0_1" pos="-10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_4_ENT" lane="E3_0" pos="10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_4_EXT" lane="E3_0" pos="-10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_5_ENT" lane="E3_1" pos="10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_5_EXT" lane="E3_1" pos="-10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_6_ENT" lane="E4_0" pos="10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_6_EXT" lane="E4_0" pos="-10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_7_ENT" lane="E4_1" pos="10.00" period="1.00" file="detector_output.xml"/>
+    <inductionLoop id="detector_1_7_EXT" lane="E4_1" pos="-10.00" period="1.00" file="detector_output.xml"/>
+</additional>
