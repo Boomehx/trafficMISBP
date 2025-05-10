@@ -3,9 +3,6 @@ import xml.etree.ElementTree as ET
 import csv
 
 def process_xml_file(file_path):
-    """
-    Processes an XML file to compute average attributes in <step> elements.
-    """
     tree = ET.parse(file_path)
     root = tree.getroot()
 
@@ -24,9 +21,7 @@ def process_xml_file(file_path):
     return averages
 
 def process_folder(folder_path, output_csv):
-    """
-    Processes XML files starting with 'summary' in the folder and writes the results to a CSV file.
-    """
+  
     rows = []
     column_headers = set()
 
@@ -36,18 +31,15 @@ def process_folder(folder_path, output_csv):
             row = process_xml_file(file_path)
             rows.append(row)
             column_headers.update(row.keys())
-
-    # Ensure consistent column order
     column_headers = sorted(column_headers)
 
-    # Write results to CSV
     with open(output_csv, mode='w', newline='', encoding='utf-8') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=column_headers)
         writer.writeheader()
         writer.writerows(rows)
 
 if __name__ == "__main__":
-    folder_path = r"C:\Users\bobbi\Documents\YEAR 3\sumo3\results\CN75"  # Adjusted folder path
-    output_csv = r"C:\Users\bobbi\Documents\YEAR 3\sumo3\results\CN75\outputCN75.csv"
+    folder_path = r"C:\Users\bobbi\Documents\YEAR 3\sumo3\results\CN25SHORT"  # Adjusted folder path
+    output_csv = r"C:\Users\bobbi\Documents\YEAR 3\sumo3\results\CN25SHORT\outputCN25SHORT.csv"
     process_folder(folder_path, output_csv)
     print(f"Results written to {output_csv}")
