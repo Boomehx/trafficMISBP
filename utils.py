@@ -5,7 +5,13 @@ import math
 def getIncomingOutcomingLanes(TLSID):
     """Gets controlled routes for intersection. This is the entry and exit lanes
        of the intersection.
-       Output: List(List(Entry Lane, Exit Lane)) """
+        Args:
+            TLSID (str): Traffic Light ID
+        Returns:   
+            (list): List of routes for the intersection. Each route is a tuple of
+            two lanes. The first lane is the entry lane and the second lane is the exit lane.
+
+    """
     routes = []
     lst = traci.trafficlight.getControlledLinks(TLSID)
 
@@ -23,7 +29,11 @@ def getIncomingOutcomingLanes(TLSID):
 
 def getOutcomingLanes(TLSID):
     """Gets the exit lanes of the intersection.
-       Output: List(Exit Lane)
+         Args:
+            TLSID (str): Traffic Light ID
+        Returns:
+            (list): List of exit lanes for the intersection.
+    
     """
     lst = getIncomingOutcomingLanes(TLSID)
     output = []
@@ -37,8 +47,12 @@ def getOutcomingLanes(TLSID):
 def getStates(reMapList, TLSID):
     """This gets the conflicts and maps the conflict lanes to the
        traffic light sequence.
-       Output: Dictionary of Traffic Light States Per Lane 
-
+       Args:
+            reMapList (list): List of lanes that are do not conflict with each other
+            TLSID (str): Traffic Light ID
+        Returns:
+            (dict): Dictionary of traffic light states. The key is the lane 
+            index and the value is the state.
     """
     laneCount = len(traci.trafficlight.getControlledLanes(TLSID))
     outputDic = {}
@@ -55,7 +69,15 @@ def getStates(reMapList, TLSID):
 
 def getAngle(laneID, junctionID, TLSID):
     """Gets the clockwise angle of a lane at an intersection
-    Output: Float"""
+    Output: Float
+    Args:   
+        laneID (str): Lane ID
+        junctionID (str): Junction ID
+        TLSID (str): Traffic Light ID
+    Returns:
+        (float): Angle positon of the lane at the intersection in radians.
+    """
+    # Get the angle of the lane at the intersection
     incomingLanes = traci.trafficlight.getControlledLanes(TLSID)
     laneShape = traci.lane.getShape(laneID)
     if laneID in  incomingLanes:
@@ -67,8 +89,14 @@ def getAngle(laneID, junctionID, TLSID):
     return angle
 
 def getSortedAngleList(TLSID, junctionID):
-    """Orders the lanes of an intersection in a clockwise order
-       Output: List(LaneID, Float)"""
+    """Orders the lanes of an intersection in a clockwise order.
+       Args:
+            TLSID (str): Traffic Light ID
+            junctionID (str): Junction ID
+        Returns:
+            (list): List of lanes in a clockwise order. Each lane
+            is a tuple of lane ID and angle.
+    """
     incomingLanes = list(traci.trafficlight.getControlledLanes(TLSID))
     incomingoutcomingLanes = getOutcomingLanes(TLSID)
     angleList = []
@@ -77,15 +105,20 @@ def getSortedAngleList(TLSID, junctionID):
     for i in range(len(incomingoutcomingLanes)):
         angleList.append([incomingoutcomingLanes[i], math.degrees(getAngle(incomingoutcomingLanes[i], junctionID, TLSID))])
     sortedAngleList = sorted(angleList, key=lambda x: x[1])[::-1]
-    #print("Sorted Angle List: ", sortedAngleList)
     return sortedAngleList
 
 def newMappingDic(sortedAngleList, startLane):
-    """[NEED TO RENAME THIS FUNCTION]
+    """
     This reorders the angle list so that it starts with the first lane
     at the top of the intersection. This is because the traffic light
     lane index always starts at this point.
-    Output: Dictionary(Key:Lane-Index(Pre-Conflict), Value: LaneID)
+    Args:   
+        sortedAngleList (list): List of lanes in a clockwise order. Each lane
+            is a tuple of lane ID and angle.
+        startLane (str): Lane ID of the first lane at traffic light index 0.
+    Returns:
+        (dict): Dictionary of lanes in a clockwise order. The key is the lane
+            index and the value is the lane ID.
     """
     count = -1
 
@@ -104,14 +137,23 @@ def newMappingDic(sortedAngleList, startLane):
                 break
     for lane in range(len(sortedStart)):
         output[lane] = sortedStart[lane][0]
-    #print("New Mapping Dictionary: ", output)
+
     return output
 
 def newRouteMappingDic(TLSID, mapDictionary):
-    """Pre-Conflict Graph. Maps the Lane ID of the traffic light routes
+    """
+    Pre-Conflict Graph. Maps the Lane ID of the traffic light routes
     to the order of the lane. This is not traffic light index which is 
-    only the entry lanes that are controled
-    Output: List(Lane Position Index, Lane Position Index) """
+    only the entry lanes that are 
+    Args:
+        TLSID (str): Traffic Light ID
+        mapDictionary (dict): Dictionary of lanes in a clockwise order.
+        The key is the lane index and the value is the lane ID.
+    Returns:
+        (list): List of routes for the intersection. Each route is a tuple of
+        two lanes position index. The first lane is the entry lane and the 
+        second lane is the exit lane.
+   """
     routes = getIncomingOutcomingLanes(TLSID)
     for lane in range(len(routes)):
         for key, val in mapDictionary.items():
@@ -125,7 +167,15 @@ def newRouteMappingDic(TLSID, mapDictionary):
 def reMapRoute(mappingDict, conflictList, TLSID):
     """Remaps Lane Postions to Lane Traffic Light Index. Will
     Only be Entry Lanes being controlled by traffic light.
-    Output: List(List(Primary Traffic Light Index, Non-Conflicting with Primary Index ..., ...))"""
+    Args:
+        mappingDict (dict): Dictionary of lanes in a clockwise order. The key
+        is the lane index and the value is the lane ID.
+        conflictList (list): List of conflicts.
+        TLSID (str): Traffic Light 
+    Returns:
+        (list): List of lanes that do not conflict with each other. First lane in
+        the list is primary lane and the rest are non-conflicting lanes.
+        List(List(Primary Traffic Light Index, Non-Conflicting with Primary Index ..., ...))"""
     lanes = traci.trafficlight.getControlledLanes(TLSID)
     convertList = []
     tempList = []

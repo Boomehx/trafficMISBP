@@ -34,22 +34,17 @@ traci.start(sumo_config)
 
 
 
-def generate_traffic_light_phases(TLSID):
+def generateTrafficLightPhases(TLSID):
     """
     Dynamically generates traffic light phases for a junction based on the number of lanes.
     """
-    # Get controlled lanes
-    num_lanes = len(traci.trafficlight.getControlledLanes(TLSID))
+    numLanes = len(traci.trafficlight.getControlledLanes(TLSID))
  
-  
-
-    # Generate phases
     phases = []
-    for i in range(num_lanes):
-        # All red except one lane green
-        state = ["r"] * num_lanes
-        state[i] = "G"  # Green for one lane
-        phases.append("".join(state))# 10 seconds green phase
+    for i in range(numLanes):
+        state = ["r"] * numLanes
+        state[i] = "G" 
+        phases.append("".join(state))
   
    
      
@@ -58,11 +53,11 @@ def generate_traffic_light_phases(TLSID):
 
 def generateAllPhases(tls):
     """
-    Generates traffic light phases for all traffic lights in the network.
+    Generates traffic light phases for all statsic traffic lights in the network.
     """
     all_phases = []
-    for tls_id in tls:
-        phases = generate_traffic_light_phases(tls_id)
+    for tlsID in tls:
+        phases = generateTrafficLightPhases(tlsID)
         all_phases.append(phases)
     return all_phases
 
@@ -70,6 +65,7 @@ def generateAllPhases(tls):
 
 try:
 #-------------------------------------
+#uncomment this section to run the C6E30L simulation
     #junctions = ["Junc0"]
     #tls = ["TLS0"]
     #states = generateAllPhases(tls)
@@ -79,6 +75,7 @@ try:
     #laneNum = [30]
     #currentLane = [0]
 #------------------------------------------------------
+    #This is the main paramters CN10EVEN
     junctions = ["Junc0","Junc1","Junc2","Junc3","Junc4","Junc5","Junc6","Junc7","Junc8","Junc9"]
     tls = ["TLS0","TLS1","TLS2","TLS3","TLS4","TLS5","TLS6","TLS7","TLS8","TLS9"]
     states = generateAllPhases(tls)
@@ -88,40 +85,33 @@ try:
     laneNum = [12,16,16,12,20,24,16,24,16,12]
     currentLane = [0,0,0,0,0,0,0,0,0,0,0]
 
-  
-    
+
    
     while traci.simulation.getMinExpectedNumber() > 0 and traci.simulation.getTime() < 1500:
-        traci.simulationStep()
-        #print("Overall")
-        #print(overallList)
-        #print(createValidRandomRoutes())
-        #print(currentLane)
-        for  i in range(len(tls)):
 
+        traci.simulationStep()
+
+        for  i in range(len(tls)):
 
                 if phases[i] == "SET":
                     phases[i] = "PROCESSING"
 
                     if currentLane[i] > len(traci.trafficlight.getControlledLanes(tls[i])) - 1:
+
                         if currentLane[i] >= len( states[i]):
                             currentLane[i] = 0
-                  
-
 
                     traci.trafficlight.setRedYellowGreenState(tls[i], states[i][currentLane[i]])
 
                 if phases[i] == "PROCESSING":
+
                     phaseTimes[i] = phaseTimes[i] - 1
              
                     if phaseTimes[i] <= 0:
+
                         phaseTimes[i] = 150
                         currentLane[i] = currentLane[i] + 1
                         phases[i] = "SET"
-
-
-                
-
 
 finally:
     traci.close()

@@ -21,7 +21,7 @@ def route_generator(run):
     rou_file   = os.path.join(OUTPUT_DIR, f"{ROADNETWORK}.rou.xml")
     seed = random.randint(0, 1000000)
 
-    random_trips_cmd = [
+    cmd = [
         "python", os.path.join(SUMO_TOOLS, "randomTrips.py"),
         "-n", NET_FILE,
         "-o", trips_file,
@@ -34,9 +34,9 @@ def route_generator(run):
         
     ]
 
-    subprocess.run(random_trips_cmd, check=True)
+    subprocess.run(cmd, check=True)
 
-    duarouter_cmd = [
+    duaroutercmd = [
         "duarouter",
         "-n", NET_FILE,
         "-t", trips_file,
@@ -44,43 +44,34 @@ def route_generator(run):
         "--ignore-errors"
     ]
 
-    subprocess.run(duarouter_cmd, check=True)
+    subprocess.run(duaroutercmd, check=True)
 
-def copy_summary_file(run_index):
+def copy_summary_file(runIndex):
     src = r"C:\Users\bobbi\Documents\YEAR 3\sumo3\summary.xml"
-    dest_folder = r"C:\Users\bobbi\Documents\YEAR 3\sumo3\results\STSHORT"
-    os.makedirs(dest_folder, exist_ok=True)
+    dest = r"C:\Users\bobbi\Documents\YEAR 3\sumo3\results\STSHORT"
+    os.makedirs(dest, exist_ok=True)
 
-    dest = os.path.join(dest_folder, f"summary_{run_index}.xml")
+    dest = os.path.join(dest, f"summary_{runIndex}.xml")
     shutil.copy(src, dest)
 
-def copy_queue_file(run_index):
+def copy_queue_file(runIndex):
     src = r"C:\Users\bobbi\Documents\YEAR 3\sumo3\queue_output.xml"
-    dest_folder = r"C:\Users\bobbi\Documents\YEAR 3\sumo3\results\STSHORT"
-    os.makedirs(dest_folder, exist_ok=True)
+    dest = r"C:\Users\bobbi\Documents\YEAR 3\sumo3\results\STSHORT"
+    os.makedirs(dest, exist_ok=True)
 
-    dest = os.path.join(dest_folder, f"queue_{run_index}.xml")
+    dest = os.path.join(dest, f"queue_{runIndex}.xml")
     shutil.copy(src, dest)
     
 
 def main():
     for i in range(0, 50):
-        # Run the main script
         route_generator(i)
         run_main_script()
-
-        # Check if the script has finished running
-        if os.path.exists("main.py"):
-            print("main.py has finished running.")
-        else:
-            print("main.py is still running.")
-
         copy_summary_file(i)
         copy_queue_file(i)
-        # Wait for a while before running again (optional)
-        #time.sleep(1)
+
 
 
 if __name__ == "__main__":
-    # Run the main script
+
     main()
